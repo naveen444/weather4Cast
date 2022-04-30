@@ -5,7 +5,7 @@ const clientId = process.env.REACT_APP_API_KEY;
 
 export async function getWeather(city = "london") {
 
-	const url = `http://api.openweathermap.org/data/2.5/weather?q=${city}&APPID=${clientId}`;
+	const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&APPID=${clientId}`;
 	const response = await axios.get(url)
 		.catch((error) => {
 			if (error.response.status === 404) {
@@ -19,7 +19,6 @@ export async function getWeather(city = "london") {
 
 	return response;
 
-	// console.log(response.data);
 }
 
 export async function getOneCall(lat, lon) {
