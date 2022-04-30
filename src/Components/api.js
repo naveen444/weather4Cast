@@ -3,7 +3,7 @@ import swal from "sweetalert";
 
 const clientId = process.env.REACT_APP_API_KEY;
 
-export async function getWeather(city = "london") {
+export async function getWeather(city = "Delhi") {
 
 	const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&APPID=${clientId}`;
 	const response = await axios.get(url)
