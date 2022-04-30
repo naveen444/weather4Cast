@@ -208,6 +208,13 @@
 		display: block;
 		margin-left: 10px;
 	}
+	.search-bar button.btn.btn-transparent:hover {
+		transform: scale(1);
+		-webkit-transform: scale(1);
+		-moz-transform: scale(1);
+		-ms-transform: scale(1);
+		-o-transform: scale(1);
+	}
 }
 
 @media only screen and (max-width: 767px) {
