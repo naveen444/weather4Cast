@@ -84,7 +84,7 @@ function App() {
 						<input 
 							type="text"
 							className="form-control text-dark bg-transparent m-0 p-0 px-4"
-							placeholder="Enter any City, State or Country"
+							placeholder="Enter any City or State"
 							aria-label="Recipient's username"
 							aria-describedby="button-addon"
 							onChange={searchbar} 
