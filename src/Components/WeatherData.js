@@ -1,36 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import WeatherDetails from './WeatherDetails';
-import ClearSkyDay from './WeatherIcons/ClearSkyDay';
-import ClearSkyNight from './WeatherIcons/ClearSkyNight';
-import FewCloudsDay from './WeatherIcons/FewCloudsDay';
-import FewCloudsNight from './WeatherIcons/FewCloudsNight';
 import Cloudy from './WeatherIcons/Cloudy';
-import BrokenCloudy from './WeatherIcons/BrokenCloudy';
-import Thunder from './WeatherIcons/Thunder';
-import LightRainDay from './WeatherIcons/LightRainDay';
-import LightRainNight from './WeatherIcons/LightRainNight';
-import ModerateRainDay from './WeatherIcons/ModerateRainDay';
-import ModerateRainNight from './WeatherIcons/ModerateRainNight';
-import HeavyIntensityRainDay from './WeatherIcons/HeavyIntensityRainDay';
-import HeavyIntensityRainNight from './WeatherIcons/HeavyIntensityRainNight';
-import VeryHeavyRain from './WeatherIcons/VeryHeavyRain';
-import FreezingRain from './WeatherIcons/FreezingRain';
-import VeryHeavyShowerRain from './WeatherIcons/VeryHeavyShowerRain';
-import LightSnow from './WeatherIcons/LightSnow';
-import HeavySnow from './WeatherIcons/HeavySnow';
-import HeavyShowerSnow from './WeatherIcons/HeavyShowerSnow';
-import Haze from './WeatherIcons/Haze';
 import Loader from './Loader';
-
 import getCurrentWeatherIcon from './getWeatherIcon';
 
 const WeatherData = (props) => {
 
 	const [currentWeatherState, setCurrentWeatherState] = useState(<Cloudy />);
+	const [timeString, setTimeString] = useState('');
 	
 	const weather = props.weather;
 	let isDay = '';
-	let weatherCon = '';
 	let weatherCondition = '';
 
 	const getTime = (timeStamp) => {
@@ -43,12 +23,42 @@ const WeatherData = (props) => {
 		return arr[(val % 16)]
 	}
 
+	const convertToLocalTime = (timezone) => {
+
+		// Get current UTC time
+    const utcDate = new Date();
+
+    // Apply timezone offset (seconds → milliseconds)
+    const localTime = new Date(utcDate.getTime() + timezone * 1000);
+
+		const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+		const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+		// Extract date components
+		const dayName = days[localTime.getUTCDay()];
+		const monthName = months[localTime.getUTCMonth()];
+		const day = localTime.getUTCDate();
+		const year = localTime.getUTCFullYear();
+
+		// Format hours & minutes in 12-hour format
+		let hours = localTime.getUTCHours();
+		let minutes = localTime.getUTCMinutes();
+		const ampm = hours >= 12 ? "pm" : "am";
+
+		hours = hours % 12;
+		hours = hours ? hours : 12; // Convert '0' hour to '12'
+		minutes = minutes < 10 ? "0" + minutes : minutes;
+
+		return `${dayName} , ${monthName} ${day} ${year}, ${hours}:${minutes} ${ampm}`;
+	};
+
 	if (props.weather) {
 		isDay = weather?.weather[0].icon?.includes('d');
 	}
 	
 	useEffect(()=> {
 		if (props.weather) {
+			const localTime = convertToLocalTime(props.weather.timezone);
+			setTimeString(localTime);
 			weatherCondition = getCurrentWeatherIcon(weather.weather[0].main, weather.weather[0].description, weather?.weather[0].icon);
 			setCurrentWeatherState(weatherCondition);
 		}
@@ -62,7 +72,7 @@ const WeatherData = (props) => {
 						<div className='weather-main d-flex mb-2'>
 							<div className='weather-data w-50 d-flex flex-column'>
 								<div>
-									<p className='date-time mb-0 ms-1'>{props.date}, {props.time}</p>
+									<p className='date-time mb-0 ms-1'>{timeString}</p>
 									<h1 className='location'>{`${weather?.name}, ${weather?.sys?.country}`}</h1>
 									<h5 className='mt-2'>{<span>Feels like {Math.floor(weather?.main.feels_like - 273)}<span>&#176;</span>C</span>}, {weather?.weather[0].description}</h5>
 								</div>
@@ -85,12 +95,12 @@ const WeatherData = (props) => {
 							</div>
 						</div>
 						<div className='weather-details pt-2 ps-2 d-flex flex-wrap justify-content-between'>
-							<WeatherDetails name={isDay ? 'sunset' : 'sunrise' } icon={isDay ? 'sunset' : 'sunrise' } value = {`${getTime(weather?.sys[isDay ? 'sunset' : 'sunrise' ])}`} />
-							<WeatherDetails name='humidity' icon='humidity' value = {<span>{weather?.main.humidity} %</span>} />
-							<WeatherDetails name='wind' icon='wind' value = {<span>{weather?.wind?.speed} m/s {degToCompass(weather?.wind?.deg)}</span>} />
-							<WeatherDetails name='pressure' icon='pressure' value = {<span>{weather?.main?.pressure} hPa</span>} />
-							<WeatherDetails name='Dew Point' icon='dew_point' value = {<span>{Math.floor(props.dewPoint - 273)}<span>&#176;</span>C</span>} />
-							<WeatherDetails name='Visibility' icon='visibility' value = {<span>{weather.visibility/1000} Km</span>} />
+							<WeatherDetails customClass='mt-4' fontSize='fs-6' name={isDay ? 'sunset' : 'sunrise' } icon={isDay ? 'sunset' : 'sunrise' } value = {`${getTime(weather?.sys[isDay ? 'sunset' : 'sunrise' ])}`} />
+							<WeatherDetails customClass='mt-4' fontSize='fs-6' name='humidity' icon='humidity' value = {<span>{weather?.main.humidity} %</span>} />
+							<WeatherDetails customClass='mt-4' fontSize='fs-6' name='wind' icon='wind' value = {<span>{weather?.wind?.speed} m/s {degToCompass(weather?.wind?.deg)}</span>} />
+							<WeatherDetails customClass='mt-4' fontSize='fs-6' name='pressure' icon='pressure' value = {<span>{weather?.main?.pressure} hPa</span>} />
+							<WeatherDetails customClass='mt-4' fontSize='fs-6' name='Clouds cover' icon='clouds_cover' value = {<span>{weather?.clouds.all}<span>%</span></span>} />
+							<WeatherDetails customClass='mt-4' fontSize='fs-6' name='Visibility' icon='visibility' value = {<span>{weather.visibility/1000} Km</span>} />
 						</div>
 					</div>
 				:

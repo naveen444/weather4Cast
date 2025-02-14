@@ -10,8 +10,8 @@ export async function getWeather(city = "Delhi") {
 		.catch((error) => {
 			if (error.response.status === 404) {
 				swal({
-					title: "Invalid City Name",
-					text: "Please enter a valid city name",
+					title: "Invalid City, State Name",
+					text: "Please enter a valid city or state name",
 					icon: "error"
 				})
 			}
@@ -23,8 +23,9 @@ export async function getWeather(city = "Delhi") {
 
 export async function getOneCall(lat, lon) {
 
-	const url = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=hourly,minutely,alerts&appid=${clientId}`;
+	// https://api.openweathermap.org/data/2.5/forecast?q=Delhi&APPID=415711cc93f283732eb8673164284706
+	const url = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&exclude=hourly,minutely,alerts&appid=${clientId}`;
 	const response = await axios.get(url);
-
+	
 	return response;
 }
